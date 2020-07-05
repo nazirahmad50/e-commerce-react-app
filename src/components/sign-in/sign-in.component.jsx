@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-button/custom-button.component";
 
-import { signInWithGoogle } from "../../firebase/firebase-util";
+import { signInWithGoogle, auth } from "../../firebase/firebase-util";
 
 import "./sign-in.styles.scss";
 
@@ -17,16 +17,26 @@ class SignIn extends Component {
     };
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
 
-    // clear form data
-    this.setState({ email: "", password: "" });
+    const { email, password } = this.state;
+
+    try {
+      // allow user to to sign in with email and password
+      await auth.signInWithEmailAndPassword(email, password);
+
+      // clear form data after user signes in
+      this.setState({ email: "", password: "" });
+
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name);
+
     // [] allows you handle your input field change events in one simple line,
     //instead of having to write out a bunch of handleChange functions for each different input field
     this.setState({ [name]: value });

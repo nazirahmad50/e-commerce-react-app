@@ -52,6 +52,8 @@ class SignUp extends Component {
   handleChange = e =>{
       const {name, value} = e.target;
 
+      // set the value for the respective input name
+      // e.g. name=displayName or name=email etc
       this.setState({[name]:value});
   }
 

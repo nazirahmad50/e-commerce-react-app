@@ -20,6 +20,7 @@ class SignIn extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
+    // clear form data
     this.setState({ email: "", password: "" });
   };
 

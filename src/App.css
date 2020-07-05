@@ -7,3 +7,8 @@ a{
     text-decoration: none;
     color: black;
 }
+
+*{
+    /*so all the elemnsts are aligned*/
+    box-sizing: border-box;
+}

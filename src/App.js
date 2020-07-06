@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Switch, Route } from "react-router-dom";
-import {connect} from "react-redux";
+import { Switch, Route, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 
 import "./App.css";
 
@@ -12,12 +12,10 @@ import { auth, createUserProfileDocument } from "./firebase/firebase-util";
 import { setCurrentUser } from "./redux/user/user.actions";
 
 class App extends Component {
-
-
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    const {setCurrentUser} = this.props;
+    const { setCurrentUser } = this.props;
 
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       // if a user is signed in
@@ -27,9 +25,9 @@ class App extends Component {
         // listen for changes on userRef also get back the first state of that data
         userRef.onSnapshot((snapshot) => {
           setCurrentUser({
-                id: snapshot.id,
-                ...snapshot.data(), 
-              });
+            id: snapshot.id,
+            ...snapshot.data(),
+          });
         });
       }
       // if user signs out
@@ -49,24 +47,38 @@ class App extends Component {
     return (
       <div className="App">
         {/*placing the header outside the switch and routers will allow it to display in every page*/}
-        <Header/>
+        <Header />
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/shop" component={ShopPage} />
-          <Route path="/signin" component={SignInAndSignUpPage} />
+          <Route
+            exact
+            path="/signin"
+            render={() =>
+              this.props.currentUser ? (
+                <Redirect to="/" />
+              ) : (
+                <SignInAndSignUpPage />
+              )
+            }
+          />
         </Switch>
       </div>
     );
   }
 }
 
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser,
+});
+
 // 'dispatch' dispatches an action
 // so whatever actions we pass to the dispatch func it will pass that action to every reducer
-const mapDispatchToProps = dispatch =>({
+const mapDispatchToProps = (dispatch) => ({
   // create anonymous setCurrentUser func and dispatch the setCurrentUser action
-  setCurrentUser: user => dispatch(setCurrentUser(user)) 
-})
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
 
-// first args which requires mapStateToProps is null because we dont need to retrieve anything from redux store for this comp
+// first args for returning anyhting from redux store
 // second arg dispatches somehting to redux store that can potentialy modify it
-export default connect(null,mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

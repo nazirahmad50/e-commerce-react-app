@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Switch, Route } from "react-router-dom";
+import {connect} from "react-redux";
 
 import "./App.css";
 
@@ -8,19 +9,16 @@ import ShopPage from "./pages/Shop/shop.component";
 import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
 import Header from "./components/header/header.component";
 import { auth, createUserProfileDocument } from "./firebase/firebase-util";
+import { setCurrentUser } from "./redux/user/user.actions";
 
 class App extends Component {
-  constructor() {
-    super();
 
-    this.state = {
-      currentUser: null,
-    };
-  }
 
   unsubscribeFromAuth = null;
 
   componentDidMount() {
+    const {setCurrentUser} = this.props;
+
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       // if a user is signed in
       if (userAuth) {
@@ -28,24 +26,16 @@ class App extends Component {
 
         // listen for changes on userRef also get back the first state of that data
         userRef.onSnapshot((snapshot) => {
-          this.setState(
-            {
-              currentUser: {
+          setCurrentUser({
                 id: snapshot.id,
                 ...snapshot.data(), 
-              },
-            },
-            // setState is async so have to pass a func as second param, because there is a chance set state is not finished so any call after it might wont work
-            () => {
-              // console.log(this.state.currentUser);
-            }
-          );
+              });
         });
       }
       // if user signs out
       else {
         // current user is null
-        this.setState({ currentUser: userAuth });
+        setCurrentUser(userAuth);
       }
     });
   }
@@ -59,7 +49,7 @@ class App extends Component {
     return (
       <div className="App">
         {/*placing the header outside the switch and routers will allow it to display in every page*/}
-        <Header currentUser={this.state.currentUser} />
+        <Header/>
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/shop" component={ShopPage} />
@@ -70,4 +60,13 @@ class App extends Component {
   }
 }
 
-export default App;
+// 'dispatch' dispatches an action
+// so whatever actions we pass to the dispatch func it will pass that action to every reducer
+const mapDispatchToProps = dispatch =>({
+  // create anonymous setCurrentUser func and dispatch the setCurrentUser action
+  setCurrentUser: user => dispatch(setCurrentUser(user)) 
+})
+
+// first args which requires mapStateToProps is null because we dont need to retrieve anything from redux store for this comp
+// second arg dispatches somehting to redux store that can potentialy modify it
+export default connect(null,mapDispatchToProps)(App);

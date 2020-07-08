@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 
 import CustomButton from "../custom-button/custom-button.component";
 import CartItem from "../cart-item/cart-item.component";
+import {selectCartItems} from "../../redux/cart/cart.selectors";
 
 import ".//cart-dropdown.styles.scss";
 
@@ -17,8 +18,10 @@ const CartDropdown = ({cartItems}) =>(
     </div>
 )
 
-const mapStateToProps =({cart:{cartItems}}) =>({
-    cartItems
+// use memoized selector
+// this will make sure that our cart drop down is not getting re-renderd when the state changes that is unrelated to the cart items which helps in performance
+const mapStateToProps =(state) =>({
+    cartItems:selectCartItems(state)
 });
 
 export default connect(mapStateToProps)(CartDropdown);

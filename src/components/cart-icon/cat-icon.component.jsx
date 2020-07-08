@@ -1,21 +1,28 @@
 import React from "react";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 
-import {toogleCartHidden} from "../../redux/cart/cart.action";
+import { toogleCartHidden } from "../../redux/cart/cart.action";
 
-import {ReactComponent as ShoppingIcon} from "../../assets/11.1 shopping-bag.svg";
+import { ReactComponent as ShoppingIcon } from "../../assets/11.1 shopping-bag.svg";
 
 import "../cart-icon/cart-icon.styles.scss";
 
-const CartIcon = ({toogleCartHidden})=>(
-    <div className="cart-icon" onClick={toogleCartHidden}>
-        <ShoppingIcon className="shopping-icon" />
-        <span className="item-count">0</span>
-    </div>
-)
+const CartIcon = ({ toogleCartHidden, itemCount }) => (
+  <div className="cart-icon" onClick={toogleCartHidden}>
+    <ShoppingIcon className="shopping-icon" />
+    <span className="item-count">{itemCount}</span>
+  </div>
+);
 
-const mapDispatchToProps = dispatch =>({
-    toogleCartHidden: () => dispatch(toogleCartHidden())
-})
+const mapStateToProps = ({ cart: { cartItems } }) => ({
+  itemCount: cartItems.reduce(
+    (acumalatedQuantity, cartItem) => acumalatedQuantity + cartItem.quantity,
+    0
+  ),
+});
 
-export default connect(null,mapDispatchToProps)(CartIcon);
+const mapDispatchToProps = (dispatch) => ({
+  toogleCartHidden: () => dispatch(toogleCartHidden()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(CartIcon);

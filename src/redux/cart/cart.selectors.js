@@ -23,3 +23,8 @@ export const selectCartItemsCount = createSelector(
     )
 );
  
+// get the cart hidden property selctor
+export const selectCartHidden = createSelector(
+  [selectCart],
+  (cart) => cart.hidden
+);

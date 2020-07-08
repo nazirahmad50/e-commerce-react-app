@@ -1,10 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+// utilised when we need to use multiple selectors
+import {createStructuredSelector} from "reselect";
 
 import { auth } from "../../firebase/firebase-util";
 import CartIcon from "../cart-icon/cat-icon.component";
 import CartDropdown from "../cart-dropdown/cart-dropdown.component";
+import {selectCurrentUser} from "../../redux/user/user.selectors";
+import {selectCartHidden} from "../../redux/cart/cart.selectors";
+
 
 // special syntax in react for importing svg
 import { ReactComponent as Logo } from "../../assets/4.3 crown.svg";
@@ -38,12 +43,10 @@ const Header = ({ currentUser, hidden }) => (
   </div>
 );
 
-// state is the root reducer
-// gets any state we want from the redux store
-// advanced destructuring in the param
-const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({
-  currentUser,
-  hidden,
+// 'createStructuredSelector' will automatically pass the top level state into each selector
+const mapStateToProps = createStructuredSelector ({
+  currentUser: selectCurrentUser,
+  hidden: selectCartHidden,
 });
 
 // 'connect' is HOC allows us modify components to have access to things related to redux

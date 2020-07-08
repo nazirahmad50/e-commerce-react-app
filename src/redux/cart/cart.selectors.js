@@ -22,9 +22,18 @@ export const selectCartItemsCount = createSelector(
       0
     )
 );
- 
+
 // get the cart hidden property selctor
 export const selectCartHidden = createSelector(
   [selectCart],
   (cart) => cart.hidden
+);
+
+// total price of all the items in the cart  selector
+export const selectCartTotal = createSelector([selectCartItems], (cartItems) =>
+  cartItems.reduce(
+    (acumalatedQuantity, cartItem) =>
+      acumalatedQuantity + (cartItem.quantity * cartItem.price),
+    0
+  )
 );

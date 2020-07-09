@@ -2,11 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
 import "./index.css";
 import App from "./App";
 
-import store from "./redux/store";
+import { store, persistor } from "./redux/store";
 
 ReactDOM.render(
   //only used in debug mode helps with debugging*
@@ -16,7 +17,11 @@ ReactDOM.render(
     <Provider store={store}>
       {/*gives the App comp all the functionality for routing*/}
       <BrowserRouter>
-        <App />
+            {/*allow app to access to the peristance flow
+               allow PersistGate to recieve the store and fire actions that will rehydrate the state when ever out applicaiton refreshes  */}
+        <PersistGate persistor={persistor}>
+          <App />
+        </PersistGate> 
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,

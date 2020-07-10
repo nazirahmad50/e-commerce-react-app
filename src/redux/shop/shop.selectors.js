@@ -9,9 +9,16 @@ export const selectCollections = createSelector(
 );
 
 // get collections object from redux based on the 'collectionUrlParam'
-// e.g. 
+// e.g.
 export const selectCollection = (collectionUrlParam) =>
   createSelector(
     [selectCollections],
     (collections) => collections[collectionUrlParam]
   );
+
+export const selectCollectionsForPreview = createSelector(
+  [selectCollections],
+  // ' Object.keys' gets all of the key of an objct in an array format
+  // then get the value of the collection at that key which will give us an array of items
+  (collections) => Object.keys(collections).map((key) => collections[key])
+);

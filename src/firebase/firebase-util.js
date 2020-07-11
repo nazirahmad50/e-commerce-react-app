@@ -13,6 +13,8 @@ const config = {
   measurementId: "G-YPJ8B1MGGC",
 };
 
+firebase.initializeApp(config);
+
 // 'userAuth' is the user object we get when signing in such as the current user
 // 'additional data' any other data that we might pass in as an object
 export const createUserProfileDocument = async (userAuth, additionalData) => {
@@ -49,7 +51,25 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   return userRef;
 };
 
-firebase.initializeApp(config);
+// use to add collection and documents to firestore automatically when called instead of doing it manually
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) =>{
+  const collectionref = firestore.collection(collectionKey);
+
+  const batch = firestore.batch();
+
+  objectsToAdd.forEach(obj =>{
+    // give me a random new collection document with random id
+    const newDocRef = collectionref.doc();
+
+    // batch all teh calls togather
+    batch.set(newDocRef, obj);
+  })
+
+  // will fire all teh batch calls
+  // also a promise such as successed
+  return await batch.commit();
+
+}
 
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();

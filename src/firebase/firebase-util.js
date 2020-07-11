@@ -71,6 +71,29 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) =>{
 
 }
 
+// add route name and id for each collection object
+// convert all the collections in an array to seperate obejcts with its title being the collection id
+export const convertCollectionSnapshotToMap = collections =>{
+  const transformedCollection = collections.docs.map(doc =>{
+    const {title, items} = doc.data()
+
+    // represents all the final data that we want for our front end
+    return{
+      routeName: encodeURI(title.toLowerCase()),
+      id: doc.id,
+      title,
+      items
+    }
+  });
+
+  // the second args of reduce is the initlal object and it goes into the first ne element
+ // e.g. first value will be hats an empty object with property of hats thats equal to the hats collection
+  return transformedCollection.reduce((accum, collection) =>{
+    accum[collection.title.toLowerCase()] = collection;
+    return accum;
+  }, {}); 
+} 
+
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
